@@ -51,39 +51,27 @@ namespace NinjaTrader.NinjaScript.Strategies
 
         protected override void OnBarUpdate()
         {
+            if (BarsInProgress == 1 && CurrentBars[0] >= 3)
+            {
                 psar = parabolicSar[0];
                 upperChannel = Highs[1][0] + upperChannelOffset;
                 support = Lows[1][0] - supportOffset;
 
-            if (CurrentBar < BarsRequiredToTrade)
-                return;
-
-
-
-            // if (CurrentBar < upperChannel) {
-            if (IsRising(psar)) {
-                EnterLong();
+                if (Position.MarketPosition == MarketPosition.Flat)
+                {
+                    if (Close[1] >= upperChannel && Close[0] <= support)
+                    {
+                        EnterLong("BuySignal");
+                    }
+                }
+                else if (Position.MarketPosition == MarketPosition.Long)
+                {
+                    if (Close[0] >= upperChannel)
+                    {
+                        ExitLong("SellSignal");
+                    }
+                }
             }
-            // {
-            //     psar = parabolicSar[0];
-            //     upperChannel = Highs[1][0] + upperChannelOffset;
-            //     support = Lows[1][0] - supportOffset;
-
-            //     if (Position.MarketPosition == MarketPosition.Flat)
-            //     {
-            //         if (Close[1] >= upperChannel && Close[0] <= support)
-            //         {
-            //             EnterLong("BuySignal");
-            //         }
-            //     }
-            //     else if (Position.MarketPosition == MarketPosition.Long)
-            //     {
-            //         if (Close[0] >= upperChannel)
-            //         {
-            //             ExitLong("SellSignal");
-            //         }
-            //     }
-            // }
         }
     }
 }
