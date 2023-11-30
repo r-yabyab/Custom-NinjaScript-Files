@@ -68,10 +68,10 @@ namespace NinjaTrader.NinjaScript.Strategies
                 return;
 
             bool cross_above = CrossAbove(SMA(FastMA), SMA(SlowMA), 1);
-            bool cross_below = CrossBelow(SMA(SlowMA), SMA(FastMA), 1);
+            bool cross_below = CrossBelow(SMA(FastMA), SMA(SlowMA), 1);
 
-            Values[0][0] = SMA(FastMA);
-            Values[1][0] = SMA(SlowMA);
+            Values[0][0] = SMA(FastMA)[0];
+            Values[1][0] = SMA(SlowMA)[0];
             if (cross_above)
             {
                 EnterLong();
