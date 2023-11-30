@@ -45,24 +45,16 @@ namespace NinjaTrader.NinjaScript.Strategies
             if (State == State.SetDefaults)
             {
                 // ... (unchanged)
+
             }
             else if (State == State.Configure)
             {
-                AddDataSeries(Data.BarsPeriodType.Tick, 1); // Assuming tick data for MNQ
-                // PSARPARAMS = [0.02, 0.2, 0.02]
-                parabolicSar = ParabolicSAR(0.02, 0.2, 0.02);
+                // AddDataSeries(Data.BarsPeriodType.Tick, 1); // Assuming tick data for MNQ
+                // // PSARPARAMS = [0.02, 0.2, 0.02]
+                // parabolicSar = ParabolicSAR(0.02, 0.2, 0.02);
+                 parabolicSar = ParabolicSAR(0.02, 0.2, 0.02);
             }
             else if (State == State.DataLoaded) {
-                // upperChannel = Highs[1][0] + upperChannelOffset;
-                // lowerChannel = Lows[1][0] - supportOffset;
-            
-
-                // upperChannel.Plots[0].Brush = Brushes.Goldenrod;
-                // lowerChannel.Plots[0].Brush = Brushes.SeaGreen;
-
-                // AddChartIndicator(upperChannel);
-                // AddChartIndicator(lowerChannel);
-
                 AddPlot(Brushes.Green, "parabolicSAR"); // stored as Plots[0] and Values[0]
                 // AddPlot(Brushes.Blue, "lowerChannel"); // stored as Plots[1] and Values[1]
 
@@ -74,7 +66,7 @@ namespace NinjaTrader.NinjaScript.Strategies
                 // TrendLines(int strength, int numberOfTrendLines, int oldTrendsOpacity, bool alertOnBreak)
                 // return val double
 
-//                trend = TrendLines(5, 1, 3, false);
+                //                trend = TrendLines(5, 1, 3, false);
                 AddPlot(Brushes.Blue, "trendLines");
                 Values[1][0] = TrendLines(5, 1, 3, false)[0];
 
@@ -84,7 +76,8 @@ namespace NinjaTrader.NinjaScript.Strategies
         protected override void OnBarUpdate()
         {
 
-            if (CurrentBar < BarsRequiredToTrade) {
+            // if (CurrentBar < BarsRequiredToTrade) {
+            if (BarsInProgress != 0) {
                 return;
             }
 
@@ -93,8 +86,30 @@ namespace NinjaTrader.NinjaScript.Strategies
                // bool for above and below to trigger trades
 
             // if (IsRising(trend)) {
-                EnterLong();
+
+                double tickDistance = 2*TickSize;
+                double distance = parabolicSAR + tickDistance;
+
+    if (Close[0] > distance)
+    {
+        EnterLong();
+    }
+
+    // Go short if the current bar is 2 ticks below the PSAR
+    else if (Close[0] < parabolicSAR - 2 * TickSize)
+    {
+        EnterShort();
+    }
             // }
         }
+
+        #region Properties
+        [NinjaScriptProperty]
+        [Range(1, int.MaxValue)]
+        [Display(Name="parabolicSAR", Order=1, GroupName="Parameters")]
+        public double parabolicSAR
+        { get; set; }
+        #endregion
+
     }
 }
