@@ -47,43 +47,25 @@ namespace NinjaTrader.NinjaScript.Strategies
                 AddDataSeries(Data.BarsPeriodType.Tick, 1); // Assuming tick data for MNQ
                 parabolicSar = ParabolicSAR(0.02, 0.2, 0.02);
             }
+            else if (State == State.DataLoaded) {
+                upperChannel = Highs[1][0] + upperChannelOffset;
+                lowerChannel = Lows[1][0] - supportOffset;
+                
+            }
         }
 
         protected override void OnBarUpdate()
         {
                 psar = parabolicSar[0];
                 upperChannel = Highs[1][0] + upperChannelOffset;
-                support = Lows[1][0] - supportOffset;
+                lowerChannel = Lows[1][0] - supportOffset;
 
             if (CurrentBar < BarsRequiredToTrade)
                 return;
 
-
-
-            // if (CurrentBar < upperChannel) {
             if (IsRising(psar)) {
                 EnterLong();
             }
-            // {
-            //     psar = parabolicSar[0];
-            //     upperChannel = Highs[1][0] + upperChannelOffset;
-            //     support = Lows[1][0] - supportOffset;
-
-            //     if (Position.MarketPosition == MarketPosition.Flat)
-            //     {
-            //         if (Close[1] >= upperChannel && Close[0] <= support)
-            //         {
-            //             EnterLong("BuySignal");
-            //         }
-            //     }
-            //     else if (Position.MarketPosition == MarketPosition.Long)
-            //     {
-            //         if (Close[0] >= upperChannel)
-            //         {
-            //             ExitLong("SellSignal");
-            //         }
-            //     }
-            // }
         }
     }
 }
