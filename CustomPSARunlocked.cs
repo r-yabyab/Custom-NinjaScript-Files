@@ -54,6 +54,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 				Psar_acceleration					= 0.02;
 				Psar_accelerationMax					= 0.2;
 				Psar_accelerationStep					= 0.02;
+
+				AddPlot(new Stroke(Brushes.Red), PlotStyle.Dot, "ParabolicSAR");
 			}
 			else if (State == State.Configure)
 			{
@@ -65,7 +67,11 @@ namespace NinjaTrader.NinjaScript.Strategies
 			if (BarsInProgress != 0) 
 				return;
 
-			
+			double psarVal = ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep)[0];
+				Values[0][0] = ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep)[0];
+
+//			Draw.Dot(this, "ParabolicSAR", true, 0, psarVal, Brushes.Blue);
+			Draw.Dot(this, "ParabolicSARDot", false, 0, psarVal, Brushes.Red);
 		}
 
 		#region Properties
