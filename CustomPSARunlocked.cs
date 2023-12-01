@@ -60,8 +60,15 @@ namespace NinjaTrader.NinjaScript.Strategies
 				TrendLines_oldTrendOpacity = 25;
 				TrendLines_alertOnBreak = false;
 
+				BollingerBands_numStdDev = 2;
+				BollingerBands_period = 14;
 
-				AddPlot(new Stroke(Brushes.Red), PlotStyle.Dot, "ParabolicSAR");
+
+				AddPlot(new Stroke(Brushes.LimeGreen), PlotStyle.Dot, "ParabolicSAR");
+				// AddPlot(Brushes.Blue, "TrendLines"); // all trend lines connect, needs to be fixed
+				AddPlot(Brushes.Blue, "BollingerBandsUpper");
+				AddPlot(Brushes.Red, "BollingerBandsLower");
+				AddPlot(Brushes.MintCream, "BollingerBandsZero");
 			}
 			else if (State == State.Configure)
 			{
@@ -73,11 +80,26 @@ namespace NinjaTrader.NinjaScript.Strategies
 			if (BarsInProgress != 0) 
 				return;
 
-			// double psarVal = ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep)[0];
-				Values[0][0] = ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep)[0];
+				double psarVal = ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep)[0];
+				double bollingerUpper = Bollinger(BollingerBands_numStdDev, BollingerBands_period).Upper[0];
+				double bollingerLower = Bollinger(BollingerBands_numStdDev, BollingerBands_period).Lower[0];
+				double bollingerZero = Bollinger(0, BollingerBands_period)[0];
+				Values[0][0] = psarVal;
+				Values[1][0] = bollingerUpper;
+				Values[2][0] = bollingerLower;
+				Values[3][0] = bollingerZero;
 
-//			Draw.Dot(this, "ParabolicSAR", true, 0, psarVal, Brushes.Blue);
-			// Draw.Dot(this, "ParabolicSARDot", false, 0, psarVal, Brushes.Red);
+				// Values[1][0] = TrendLines(TrendLines_strength, TrendLines_numberOfTrendLines, TrendLines_oldTrendOpacity, TrendLines_alertOnBreak)[0];
+		
+				bool cross_above = CrossAbove(ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep), Bollinger(BollingerBands_numStdDev, BollingerBands_period).Lower, 1);
+				bool cross_below = CrossBelow(ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep), Bollinger(BollingerBands_numStdDev, BollingerBands_period).Upper, 1);
+
+				if (cross_above) {
+					EnterLong();
+				} else if (cross_below) {
+					EnterShort();
+				}
+		
 		}
 
 		#region Properties
@@ -98,32 +120,40 @@ namespace NinjaTrader.NinjaScript.Strategies
 		[Display(Name="Psar_accelerationStep", Order=3, GroupName="Parameters")]
 		public double Psar_accelerationStep
 		{ get; set; }
-		#endregion
 
 		[NinjaScriptProperty]
 		[Range(10, int.MaxValue)]
 		[Display(Name="TrendLines_strength", Order=4, GroupName="Parameters")]
 		public int TrendLines_strength
 		{ get; set; }
-		#endregion
 
 		[NinjaScriptProperty]
 		[Range(3, int.MaxValue)]
 		[Display(Name="TrendLines_numberOfTrendLines", Order=5, GroupName="Parameters")]
 		public int TrendLines_numberOfTrendLines
 		{ get; set; }
-		#endregion
 
 		[NinjaScriptProperty]
 		[Range(25, int.MaxValue)]
 		[Display(Name="TrendLines_oldTrendOpacity", Order=6, GroupName="Parameters")]
 		public int TrendLines_oldTrendOpacity
 		{ get; set; }
-		#endregion
 
 		[NinjaScriptProperty]
-		[Display(Name="TrendLines_alertOnBreak", Order=6, GroupName="Parameters")]
+		[Display(Name="TrendLines_alertOnBreak", Order=7, GroupName="Parameters")]
 		public bool TrendLines_alertOnBreak
+		{ get; set; }
+
+		[NinjaScriptProperty]
+		[Range(2, double.MaxValue)]
+		[Display(Name="BollingerBands_numStdDev", Order=8, GroupName="Parameters")]
+		public double BollingerBands_numStdDev
+		{ get; set; }
+
+		[NinjaScriptProperty]
+		[Range(14, int.MaxValue)]
+		[Display(Name="BollingerBands_period", Order=9, GroupName="Parameters")]
+		public int BollingerBands_period
 		{ get; set; }
 		#endregion
 
