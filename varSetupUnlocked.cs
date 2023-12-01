@@ -25,14 +25,14 @@ using NinjaTrader.NinjaScript.DrawingTools;
 //This namespace holds Strategies in this folder and is required. Do not change it. 
 namespace NinjaTrader.NinjaScript.Strategies
 {
-	public class CustomPSARunlocked : Strategy
+	public class varSetupUnlocked : Strategy
 	{
 		protected override void OnStateChange()
 		{
 			if (State == State.SetDefaults)
 			{
 				Description									= @"Enter the description for your new custom Strategy here.";
-				Name										= "CustomPSARunlocked";
+				Name										= "varSetupUnlocked";
 				Calculate									= Calculate.OnBarClose;
 				EntriesPerDirection							= 1;
 				EntryHandling								= EntryHandling.AllEntries;
@@ -51,17 +51,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 				// Disable this property for performance gains in Strategy Analyzer optimizations
 				// See the Help Guide for additional information
 				IsInstantiatedOnEachOptimizationIteration	= true;
-				Psar_acceleration					= 0.02;
-				Psar_accelerationMax					= 0.2;
-				Psar_accelerationStep					= 0.02;
-				
-				TrendLines_strength = 10;
-				TrendLines_numberOfTrendLines = 3;
-				TrendLines_oldTrendOpacity = 25;
-				TrendLines_alertOnBreak = false;
-
-
-				AddPlot(new Stroke(Brushes.Red), PlotStyle.Dot, "ParabolicSAR");
+				Bool					= false;
+				Time						= DateTime.Parse("20:58", System.Globalization.CultureInfo.InvariantCulture);
+				String					= @"sfdsfdfssf";
 			}
 			else if (State == State.Configure)
 			{
@@ -73,57 +65,24 @@ namespace NinjaTrader.NinjaScript.Strategies
 			if (BarsInProgress != 0) 
 				return;
 
-			// double psarVal = ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep)[0];
-				Values[0][0] = ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep)[0];
-
-//			Draw.Dot(this, "ParabolicSAR", true, 0, psarVal, Brushes.Blue);
-			// Draw.Dot(this, "ParabolicSARDot", false, 0, psarVal, Brushes.Red);
+			
 		}
 
 		#region Properties
 		[NinjaScriptProperty]
-		[Range(0.02, double.MaxValue)]
-		[Display(Name="Psar_acceleration", Order=1, GroupName="Parameters")]
-		public double Psar_acceleration
+		[Display(Name="Bool", Order=1, GroupName="Parameters")]
+		public bool Bool
 		{ get; set; }
 
 		[NinjaScriptProperty]
-		[Range(0.2, double.MaxValue)]
-		[Display(Name="Psar_accelerationMax", Order=2, GroupName="Parameters")]
-		public double Psar_accelerationMax
+		[PropertyEditor("NinjaTrader.Gui.Tools.TimeEditorKey")]
+		[Display(Name="Time", Order=2, GroupName="Parameters")]
+		public DateTime Time
 		{ get; set; }
 
 		[NinjaScriptProperty]
-		[Range(0.02, double.MaxValue)]
-		[Display(Name="Psar_accelerationStep", Order=3, GroupName="Parameters")]
-		public double Psar_accelerationStep
-		{ get; set; }
-		#endregion
-
-		[NinjaScriptProperty]
-		[Range(10, int.MaxValue)]
-		[Display(Name="TrendLines_strength", Order=4, GroupName="Parameters")]
-		public int TrendLines_strength
-		{ get; set; }
-		#endregion
-
-		[NinjaScriptProperty]
-		[Range(3, int.MaxValue)]
-		[Display(Name="TrendLines_numberOfTrendLines", Order=5, GroupName="Parameters")]
-		public int TrendLines_numberOfTrendLines
-		{ get; set; }
-		#endregion
-
-		[NinjaScriptProperty]
-		[Range(25, int.MaxValue)]
-		[Display(Name="TrendLines_oldTrendOpacity", Order=6, GroupName="Parameters")]
-		public int TrendLines_oldTrendOpacity
-		{ get; set; }
-		#endregion
-
-		[NinjaScriptProperty]
-		[Display(Name="TrendLines_alertOnBreak", Order=6, GroupName="Parameters")]
-		public bool TrendLines_alertOnBreak
+		[Display(Name="String", Order=3, GroupName="Parameters")]
+		public string String
 		{ get; set; }
 		#endregion
 
