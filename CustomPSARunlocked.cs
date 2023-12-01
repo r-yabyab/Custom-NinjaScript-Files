@@ -69,6 +69,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 				AddPlot(Brushes.Blue, "BollingerBandsUpper");
 				AddPlot(Brushes.Red, "BollingerBandsLower");
 				AddPlot(Brushes.MintCream, "BollingerBandsZero");
+
 			}
 			else if (State == State.Configure)
 			{
@@ -89,6 +90,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 				Values[2][0] = bollingerLower;
 				Values[3][0] = bollingerZero;
 
+
 				// Values[1][0] = TrendLines(TrendLines_strength, TrendLines_numberOfTrendLines, TrendLines_oldTrendOpacity, TrendLines_alertOnBreak)[0];
 		
 				bool cross_above = CrossAbove(ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep), Bollinger(BollingerBands_numStdDev, BollingerBands_period).Lower, 1);
@@ -96,8 +98,20 @@ namespace NinjaTrader.NinjaScript.Strategies
 
 				if (cross_above) {
 					EnterLong();
-				} else if (cross_below) {
+
+					SetStopLoss(CalculationMode.Ticks, 4);
+        			SetProfitTarget(CalculationMode.Ticks, 4);
+					
+					// SetTrailStop(CalculationMode.Ticks, 3);
+
+				} 
+				if (cross_below) {
 					EnterShort();
+
+					SetStopLoss(CalculationMode.Ticks, 4);
+        			SetProfitTarget(CalculationMode.Ticks, 4);
+					
+					// SetTrailStop(CalculationMode.Ticks, 6);
 				}
 		
 		}
