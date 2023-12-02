@@ -63,6 +63,10 @@ namespace NinjaTrader.NinjaScript.Strategies
 				BollingerBands_numStdDev = 2;
 				BollingerBands_period = 14;
 
+				tick_size = 2;
+				stopLoss_tick_size = 4;
+				profitTarget_tick_size = 6;
+
 
 				AddPlot(new Stroke(Brushes.LimeGreen), PlotStyle.Dot, "ParabolicSAR");
 				// AddPlot(Brushes.Blue, "TrendLines"); // all trend lines connect, needs to be fixed
@@ -90,29 +94,42 @@ namespace NinjaTrader.NinjaScript.Strategies
 				Values[2][0] = bollingerLower;
 				Values[3][0] = bollingerZero;
 
+				// matches MNQ tick sizes
+				double psarValRound = Math.Round(psarVal / 0.25) * 0.25;
+
 
 				// Values[1][0] = TrendLines(TrendLines_strength, TrendLines_numberOfTrendLines, TrendLines_oldTrendOpacity, TrendLines_alertOnBreak)[0];
 		
 				bool cross_above = CrossAbove(ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep), Bollinger(BollingerBands_numStdDev, BollingerBands_period).Lower, 1);
 				bool cross_below = CrossBelow(ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep), Bollinger(BollingerBands_numStdDev, BollingerBands_period).Upper, 1);
 
-				if (cross_above) {
+				// if (Close[0] > ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep)[0] + 2*TickSize) {
+				if (Close[0] == psarValRound + tick_size*TickSize) {
 					EnterLong();
 
-					SetStopLoss(CalculationMode.Ticks, 4);
-        			SetProfitTarget(CalculationMode.Ticks, 4);
-					
-					// SetTrailStop(CalculationMode.Ticks, 3);
+					SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
+        			SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
+					// SetTrailStop(CalculationMode.Ticks, 4);
 
-				} 
-				if (cross_below) {
-					EnterShort();
-
-					SetStopLoss(CalculationMode.Ticks, 4);
-        			SetProfitTarget(CalculationMode.Ticks, 4);
-					
-					// SetTrailStop(CalculationMode.Ticks, 6);
 				}
+
+				// if (cross_above) {
+				// 	EnterLong();
+
+				// 	SetStopLoss(CalculationMode.Ticks, 4);
+        		// 	SetProfitTarget(CalculationMode.Ticks, 4);
+					
+				// 	// SetTrailStop(CalculationMode.Ticks, 3);
+
+				// } 
+				// if (cross_below) {
+				// 	EnterShort();
+
+				// 	SetStopLoss(CalculationMode.Ticks, 4);
+        		// 	SetProfitTarget(CalculationMode.Ticks, 4);
+					
+				// 	// SetTrailStop(CalculationMode.Ticks, 6);
+				// }
 		
 		}
 
@@ -168,6 +185,24 @@ namespace NinjaTrader.NinjaScript.Strategies
 		[Range(14, int.MaxValue)]
 		[Display(Name="BollingerBands_period", Order=9, GroupName="Parameters")]
 		public int BollingerBands_period
+		{ get; set; }
+
+		[NinjaScriptProperty]
+		[Range(2, double.MaxValue)]
+		[Display(Name="tick_size", Order=10, GroupName="Parameters")]
+		public double tick_size
+		{ get; set; }
+
+		[NinjaScriptProperty]
+		[Range(4, double.MaxValue)]
+		[Display(Name="stopLoss_tick_size", Order=11, GroupName="Parameters")]
+		public double stopLoss_tick_size
+		{ get; set; }
+
+		[NinjaScriptProperty]
+		[Range(6, double.MaxValue)]
+		[Display(Name="profitTarget_tick_size", Order=12, GroupName="Parameters")]
+		public double profitTarget_tick_size
 		{ get; set; }
 		#endregion
 
