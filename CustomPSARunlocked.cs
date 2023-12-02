@@ -62,11 +62,11 @@ namespace NinjaTrader.NinjaScript.Strategies
 				TrendLines_alertOnBreak = false;
 
 				BollingerBands_numStdDev = 2;
-				BollingerBands_period = 14;
+				BollingerBands_period = 10;
 
 				tick_size = 6;
-				stopLoss_tick_size = 5;
-				profitTarget_tick_size = 6;
+				stopLoss_tick_size = 7;
+				profitTarget_tick_size = 7;
 
 
 				AddPlot(new Stroke(Brushes.LimeGreen), PlotStyle.Dot, "ParabolicSAR");
@@ -82,6 +82,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 		}
 
 		protected override void OnBarUpdate()
+		// protected override void OnMarketData(MarketDataEventArgs marketDataUpdate)
 		{
 			if (BarsInProgress != 0) 
 				return;
@@ -107,15 +108,18 @@ namespace NinjaTrader.NinjaScript.Strategies
 				// if (Close[0] > ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep)[0] + 2*TickSize) {
 				// if (Close[0] == psarValRound + tick_size*TickSize) {
 				// if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize)) {
-				if (Close[0] < psarValRound + tick_size*TickSize) {
-					if ((Close[0] > psarVal + 1*TickSize)) {
+				// if (Close[0] == psarValRound + tick_size*TickSize) {	// executes Long on next bar open if current bar has this
+				if (Close[0] > bollingerUpper && Close[0] > psarVal) {
+					// if ((Close[0] > psarVal + 1*TickSize)) {
 						Print("===========Condition met. Entering Long at price: " + Close[0] + "=========================");
-						Print("PSAR val offset: " + (psarValRound + tick_size*TickSize) + " //TICKOFFSET" + (tick_size*TickSize));
-					EnterLong("Enter Long");
+						Print("PSAR val offset: " + (psarValRound + tick_size*TickSize) + " //TICKOFFSET" + (tick_size*TickSize/.25) + " //TICKSIZE: " + TickSize);
+					// EnterLong("Enter Long");
+					EnterShort("Enter Short");
 
 					SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
         			SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
-					}
+					// SetParabolicStop(CalculationMode.Ticks, stopLoss_tick_size);
+					// }
 
 					// SetTrailStop(CalculationMode.Ticks, 4);
 
@@ -148,6 +152,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 	if (execution.Order.Name == "Enter Long") {
 		Print("@#$@)#($#)@($@#)()@$(@)# ENTER LONG @ " + price);
 	}
+	if (execution.Order.Name == "Enter Short") {
+		Print("@#$@)#($#)@($@#)()@$(@)# ENTER SHORT @ " + price);
+	}
 	if (execution.Order.Name == "Profit target")
 	{
 		// the profit target has had a fill or part fill
@@ -163,6 +170,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
 	if (execution.Order.Name == "Trail stop")
 	{
+		Print("=======TRAILSTOP HIT @" + price);
 		// the trailing stop loss has had a fill or part fill
 	}
 }
@@ -210,13 +218,13 @@ namespace NinjaTrader.NinjaScript.Strategies
 		{ get; set; }
 
 		[NinjaScriptProperty]
-		[Range(2, double.MaxValue)]
+		[Range(0, double.MaxValue)] // default 2
 		[Display(Name="BollingerBands_numStdDev", Order=8, GroupName="Parameters")]
 		public double BollingerBands_numStdDev
 		{ get; set; }
 
 		[NinjaScriptProperty]
-		[Range(14, int.MaxValue)]
+		[Range(1, int.MaxValue)]	// default 14
 		[Display(Name="BollingerBands_period", Order=9, GroupName="Parameters")]
 		public int BollingerBands_period
 		{ get; set; }
