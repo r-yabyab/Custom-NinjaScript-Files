@@ -34,6 +34,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 				Description									= @"Enter the description for your new custom Strategy here.";
 				Name										= "CustomPSARunlocked";
 				Calculate									= Calculate.OnBarClose;
+				// Calculate									= Calculate.OnEachTick;
 				EntriesPerDirection							= 1;
 				EntryHandling								= EntryHandling.AllEntries;
 				IsExitOnSessionCloseStrategy				= true;
@@ -63,8 +64,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 				BollingerBands_numStdDev = 2;
 				BollingerBands_period = 14;
 
-				tick_size = 2;
-				stopLoss_tick_size = 4;
+				tick_size = 6;
+				stopLoss_tick_size = 5;
 				profitTarget_tick_size = 6;
 
 
@@ -104,14 +105,23 @@ namespace NinjaTrader.NinjaScript.Strategies
 				bool cross_below = CrossBelow(ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep), Bollinger(BollingerBands_numStdDev, BollingerBands_period).Upper, 1);
 
 				// if (Close[0] > ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep)[0] + 2*TickSize) {
-				if (Close[0] == psarValRound + tick_size*TickSize) {
-					EnterLong();
+				// if (Close[0] == psarValRound + tick_size*TickSize) {
+				// if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize)) {
+				if (Close[0] < psarValRound + tick_size*TickSize) {
+					if ((Close[0] > psarVal + 1*TickSize)) {
+						Print("===========Condition met. Entering Long at price: " + Close[0] + "=========================");
+						Print("PSAR val offset: " + (psarValRound + tick_size*TickSize) + " //TICKOFFSET" + (tick_size*TickSize));
+					EnterLong("Enter Long");
 
 					SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
         			SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
+					}
+
 					// SetTrailStop(CalculationMode.Ticks, 4);
 
 				}
+
+				
 
 				// if (cross_above) {
 				// 	EnterLong();
@@ -132,6 +142,30 @@ namespace NinjaTrader.NinjaScript.Strategies
 				// }
 		
 		}
+
+		protected override void OnExecutionUpdate(Execution execution, string executionId, double price, int quantity, MarketPosition marketPosition, string orderId, DateTime time)
+{
+	if (execution.Order.Name == "Enter Long") {
+		Print("@#$@)#($#)@($@#)()@$(@)# ENTER LONG @ " + price);
+	}
+	if (execution.Order.Name == "Profit target")
+	{
+		// the profit target has had a fill or part fill
+		Print("=========PROFIT HIT @" + price);
+	}
+
+	if (execution.Order.Name == "Stop loss")
+	{
+		// the stop loss has had a fill or part fill
+		Print("=========STOPLOSS HIT @" + price);
+
+	}
+
+	if (execution.Order.Name == "Trail stop")
+	{
+		// the trailing stop loss has had a fill or part fill
+	}
+}
 
 		#region Properties
 		[NinjaScriptProperty]
