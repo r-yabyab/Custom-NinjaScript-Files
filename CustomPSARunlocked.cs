@@ -33,8 +33,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 			{
 				Description									= @"Enter the description for your new custom Strategy here.";
 				Name										= "CustomPSARunlocked";
-				Calculate									= Calculate.OnBarClose;
-				// Calculate									= Calculate.OnEachTick;
+				// Calculate									= Calculate.OnBarClose;
+				Calculate									= Calculate.OnEachTick;
 				EntriesPerDirection							= 1;
 				EntryHandling								= EntryHandling.AllEntries;
 				IsExitOnSessionCloseStrategy				= true;
@@ -64,9 +64,12 @@ namespace NinjaTrader.NinjaScript.Strategies
 				BollingerBands_numStdDev = 2;
 				BollingerBands_period = 10;
 
-				tick_size = 6;
-				stopLoss_tick_size = 7;
-				profitTarget_tick_size = 7;
+				tick_size = 10;
+				stopLoss_tick_size = 6;
+				profitTarget_tick_size = 12;
+
+				SMA_med = 50;
+				SMA_long = 200;
 
 
 				AddPlot(new Stroke(Brushes.LimeGreen), PlotStyle.Dot, "ParabolicSAR");
@@ -74,6 +77,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 				AddPlot(Brushes.Blue, "BollingerBandsUpper");
 				AddPlot(Brushes.Red, "BollingerBandsLower");
 				AddPlot(Brushes.MintCream, "BollingerBandsZero");
+				AddPlot(Brushes.DarkViolet, "SMA_med");
+				AddPlot(Brushes.Yellow, "SMA_long");
 
 			}
 			else if (State == State.Configure)
@@ -81,8 +86,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 			}
 		}
 
-		protected override void OnBarUpdate()
-		// protected override void OnMarketData(MarketDataEventArgs marketDataUpdate)
+		// protected override void OnBarUpdate()
+		
+		protected override void OnMarketData(MarketDataEventArgs marketDataUpdate)
 		{
 			if (BarsInProgress != 0) 
 				return;
@@ -91,10 +97,14 @@ namespace NinjaTrader.NinjaScript.Strategies
 				double bollingerUpper = Bollinger(BollingerBands_numStdDev, BollingerBands_period).Upper[0];
 				double bollingerLower = Bollinger(BollingerBands_numStdDev, BollingerBands_period).Lower[0];
 				double bollingerZero = Bollinger(0, BollingerBands_period)[0];
+				double SMA_medVal = SMA(SMA_med)[0];
+				double SMA_longVal = SMA(SMA_long)[0];
 				Values[0][0] = psarVal;
 				Values[1][0] = bollingerUpper;
 				Values[2][0] = bollingerLower;
 				Values[3][0] = bollingerZero;
+				Values[4][0] = SMA_medVal;
+				Values[5][0] = SMA_longVal;
 
 				// matches MNQ tick sizes
 				double psarValRound = Math.Round(psarVal / 0.25) * 0.25;
@@ -105,23 +115,47 @@ namespace NinjaTrader.NinjaScript.Strategies
 				bool cross_above = CrossAbove(ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep), Bollinger(BollingerBands_numStdDev, BollingerBands_period).Lower, 1);
 				bool cross_below = CrossBelow(ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep), Bollinger(BollingerBands_numStdDev, BollingerBands_period).Upper, 1);
 
+				bool SMAcross_above = CrossAbove(SMA(SMA_med), SMA(SMA_long), 1);
+
 				// if (Close[0] > ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep)[0] + 2*TickSize) {
 				// if (Close[0] == psarValRound + tick_size*TickSize) {
 				// if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize)) {
 				// if (Close[0] == psarValRound + tick_size*TickSize) {	// executes Long on next bar open if current bar has this
-				if (Close[0] > bollingerUpper && Close[0] > psarVal) {
+				
+				// // For barUpdate, order exec on bar open, works on historical testing
+				// if (Close[0] > bollingerUpper && Close[0] > psarVal) {
+				// 	// if ((Close[0] > psarVal + 1*TickSize)) {
+				// 		Print("===========Condition met. Entering Long at price: " + Close[0] + "=========================");
+				// 		Print("PSAR val offset: " + (psarValRound + tick_size*TickSize) + " //TICKOFFSET" + (tick_size*TickSize/.25) + " //TICKSIZE: " + TickSize);
+				// 	// EnterLong("Enter Long");
+				// 	EnterShort("Enter Short");
+
+				// 	SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
+        		// 	SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
+				// 	// SetParabolicStop(CalculationMode.Ticks, stopLoss_tick_size);
+				// 	// }
+
+				// 	// SetTrailStop(CalculationMode.Ticks, 4);
+
+				// }
+
+				// if (Close[0] == psarValRound + tick_size*TickSize)
+				if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && (Close[0] > SMA_medVal))
+				// if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && SMAcross_above)
+				{
 					// if ((Close[0] > psarVal + 1*TickSize)) {
 						Print("===========Condition met. Entering Long at price: " + Close[0] + "=========================");
 						Print("PSAR val offset: " + (psarValRound + tick_size*TickSize) + " //TICKOFFSET" + (tick_size*TickSize/.25) + " //TICKSIZE: " + TickSize);
-					// EnterLong("Enter Long");
-					EnterShort("Enter Short");
+					EnterLong("Enter Long");
+					// EnterShort("Enter Short");
 
 					SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
         			SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
+
 					// SetParabolicStop(CalculationMode.Ticks, stopLoss_tick_size);
 					// }
 
-					// SetTrailStop(CalculationMode.Ticks, 4);
+					// SetTrailStop(CalculationMode.Ticks, 6);
 
 				}
 
@@ -245,6 +279,18 @@ namespace NinjaTrader.NinjaScript.Strategies
 		[Range(6, double.MaxValue)]
 		[Display(Name="profitTarget_tick_size", Order=12, GroupName="Parameters")]
 		public double profitTarget_tick_size
+		{ get; set; }
+
+		[NinjaScriptProperty]
+		[Range(20, int.MaxValue)]
+		[Display(Name="SMA_med", Order=13, GroupName="Parameters")]
+		public int SMA_med
+		{ get; set; }
+
+		[NinjaScriptProperty]
+		[Range(20, int.MaxValue)]
+		[Display(Name="SMA_long", Order=14, GroupName="Parameters")]
+		public int SMA_long
 		{ get; set; }
 		#endregion
 
