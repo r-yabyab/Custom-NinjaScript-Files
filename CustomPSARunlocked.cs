@@ -64,9 +64,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 				BollingerBands_numStdDev = 2;
 				BollingerBands_period = 10;
 
-				tick_size = 10;
+				tick_size = 6;
 				stopLoss_tick_size = 6;
-				profitTarget_tick_size = 12;
+				profitTarget_tick_size = 9;
 
 				SMA_med = 50;
 				SMA_long = 200;
@@ -122,7 +122,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 				// if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize)) {
 				// if (Close[0] == psarValRound + tick_size*TickSize) {	// executes Long on next bar open if current bar has this
 				
-				// // For barUpdate, order exec on bar open, works on historical testing
+				// // For OnBarUpdate (bar by bar update), order exec on bar open, works on historical testing
 				// if (Close[0] > bollingerUpper && Close[0] > psarVal) {
 				// 	// if ((Close[0] > psarVal + 1*TickSize)) {
 				// 		Print("===========Condition met. Entering Long at price: " + Close[0] + "=========================");
@@ -139,6 +139,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
 				// }
 
+				// // For OnMarketData (tick by tick update)
 				// if (Close[0] == psarValRound + tick_size*TickSize)
 				if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && (Close[0] > SMA_medVal))
 				// if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && SMAcross_above)
