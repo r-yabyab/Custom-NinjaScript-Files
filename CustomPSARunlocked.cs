@@ -160,6 +160,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 				}
 
 				// // // For limit orders on every bar
+				// // // Need to add order objects to set profit takes and limit sells
+				// // // Watch for volatility might touch of both profit and sell
 				// if ((Close[0] < psarValRound + 3 + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && (Close[0] > SMA_medVal))
 				// // if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && SMAcross_above)
 				// {
