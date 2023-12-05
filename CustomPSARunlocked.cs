@@ -112,10 +112,10 @@ namespace NinjaTrader.NinjaScript.Strategies
 
 				// Values[1][0] = TrendLines(TrendLines_strength, TrendLines_numberOfTrendLines, TrendLines_oldTrendOpacity, TrendLines_alertOnBreak)[0];
 		
-				bool cross_above = CrossAbove(ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep), Bollinger(BollingerBands_numStdDev, BollingerBands_period).Lower, 1);
-				bool cross_below = CrossBelow(ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep), Bollinger(BollingerBands_numStdDev, BollingerBands_period).Upper, 1);
+				// bool cross_above = CrossAbove(ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep), Bollinger(BollingerBands_numStdDev, BollingerBands_period).Lower, 1);
+				// bool cross_below = CrossBelow(ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep), Bollinger(BollingerBands_numStdDev, BollingerBands_period).Upper, 1);
 
-				bool SMAcross_above = CrossAbove(SMA(SMA_med), SMA(SMA_long), 1);
+				// bool SMAcross_above = CrossAbove(SMA(SMA_med), SMA(SMA_long), 1);
 
 				// if (Close[0] > ParabolicSAR(Psar_acceleration, Psar_accelerationMax, Psar_accelerationStep)[0] + 2*TickSize) {
 				// if (Close[0] == psarValRound + tick_size*TickSize) {
@@ -139,7 +139,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
 				// }
 
-				// // For OnMarketData (tick by tick update)
+				// For OnMarketData (tick by tick update)
 				// if (Close[0] == psarValRound + tick_size*TickSize)
 				if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && (Close[0] > SMA_medVal))
 				// if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && SMAcross_above)
@@ -157,27 +157,18 @@ namespace NinjaTrader.NinjaScript.Strategies
 					// }
 
 					// SetTrailStop(CalculationMode.Ticks, 6);
-
 				}
 
-				
+				// // // For limit orders on every bar
+				// if ((Close[0] < psarValRound + 3 + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && (Close[0] > SMA_medVal))
+				// // if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && SMAcross_above)
+				// {
+				// 	// if ((Close[0] > psarVal + 1*TickSize)) {
+				// 		Print("===========Condition met. Entering Long at price: " + Close[0] + "=========================");
+				// 		Print("PSAR val offset: " + (psarValRound + tick_size*TickSize) + " //TICKOFFSET" + (tick_size*TickSize/.25) + " //TICKSIZE: " + TickSize);
 
-				// if (cross_above) {
-				// 	EnterLong();
+				// EnterLongLimit(psarValRound + tick_size*TickSize, "PSAR entry");	
 
-				// 	SetStopLoss(CalculationMode.Ticks, 4);
-        		// 	SetProfitTarget(CalculationMode.Ticks, 4);
-					
-				// 	// SetTrailStop(CalculationMode.Ticks, 3);
-
-				// } 
-				// if (cross_below) {
-				// 	EnterShort();
-
-				// 	SetStopLoss(CalculationMode.Ticks, 4);
-        		// 	SetProfitTarget(CalculationMode.Ticks, 4);
-					
-				// 	// SetTrailStop(CalculationMode.Ticks, 6);
 				// }
 		
 		}
