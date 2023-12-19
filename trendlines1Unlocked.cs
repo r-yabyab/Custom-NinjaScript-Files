@@ -297,13 +297,13 @@ namespace NinjaTrader.NinjaScript.Strategies
 		{ get; set; }
 
 		[NinjaScriptProperty]
-		[Range(2, double.MaxValue)]
+		[Range(1, double.MaxValue)]
 		[Display(Name="tick_size", Order=10, GroupName="Parameters")]
 		public double tick_size
 		{ get; set; }
 
 		[NinjaScriptProperty]
-		[Range(4, double.MaxValue)]
+		[Range(2, double.MaxValue)]
 		[Display(Name="stopLoss_tick_size", Order=11, GroupName="Parameters")]
 		public double stopLoss_tick_size
 		{ get; set; }
