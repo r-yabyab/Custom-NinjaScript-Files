@@ -62,7 +62,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 				Psar_accelerationMax					= 0.2;
 				Psar_accelerationStep					= 0.02;
 				
-				TrendLines_strength = 20;
+				TrendLines_strength = 23;
 				TrendLines_numberOfTrendLines = 1;
 				TrendLines_oldTrendOpacity = 25;
 				TrendLines_alertOnBreak = false;
@@ -70,9 +70,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 				BollingerBands_numStdDev = 2;
 				BollingerBands_period = 10;
 
-				tick_size = 6;
-				stopLoss_tick_size = 6;
-				profitTarget_tick_size = 12;
+				tick_size = 2;
+				stopLoss_tick_size = 8;
+				profitTarget_tick_size = 33;
 
 				SMA_med = 50;
 				SMA_long = 200;
