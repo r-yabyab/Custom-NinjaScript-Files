@@ -74,14 +74,22 @@ namespace NinjaTrader.NinjaScript.Strategies
 			bool secondBar_isRed = Close[2] < Open[2];
 			bool thirdBar_isGreen = Close[3] > Open[3];
 
+			double first = VOL()[1];
+			double second = VOL()[2];
+
 			// if previous two bars are each RED & at least twice the size of 3rd GREEN bar
 			// if (Close[0] > Vol_UD_Val) 
 			if ((thirdBar_isGreen && secondBar_isRed && firstBar_isRed) 
-				&& (VolumeUpDown()[3] > VolumeUpDown()[1]*valueMultiplier)
-				&& (VolumeUpDown()[3] > VolumeUpDown()[2]*valueMultiplier)
+				&& (VOL()[1] > VOL()[3]*valueMultiplier)
+				&& (VOL()[2] > VOL()[3]*valueMultiplier)
 				) 
 				{
 					Print("The current Volume value is " + Vol_UD_Val.ToString());
+					Print("firstBar_isRed : " + first.ToString());
+					Print("secondBar_isRed : " + second.ToString());
+					Print("thirdBar_isGreen: ++" + VolumeUpDown()[3].ToString());
+					Print("thirdBar_isGreen:VOLVOL ++" + VOL()[3].ToString());
+					Print("---------------");
 
 				EnterLong("Enter Long");
 				SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
