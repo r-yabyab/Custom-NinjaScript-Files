@@ -64,6 +64,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 			}
 		}
 
+		// market order lags behind 1 bar if not tick replay
 		protected override void OnBarUpdate()
 		{
 			if (BarsInProgress != 0 || CurrentBars[0] < 3) 
