@@ -25,14 +25,14 @@ using NinjaTrader.NinjaScript.DrawingTools;
 //This namespace holds Strategies in this folder and is required. Do not change it. 
 namespace NinjaTrader.NinjaScript.Strategies
 {
-	public class volStratLive : Strategy
+	public class volStratLiveLag : Strategy
 	{
 		protected override void OnStateChange()
 		{
 			if (State == State.SetDefaults)
 			{
 				Description									= @"Enter the description for your new custom Strategy here.";
-				Name										= "volStratLive";
+				Name										= "volStratLiveLag";
 				// Calculate									= Calculate.OnBarClose;
 				Calculate									= Calculate.OnEachTick;
 				EntriesPerDirection							= 1;
@@ -67,7 +67,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 		protected override void OnBarUpdate()
 		// protected override void OnMarketData(MarketDataEventArgs marketDataUpdate)
 		{
-			if (BarsInProgress != 0 || CurrentBars[0] < 3) 
+			if (BarsInProgress != 0 || CurrentBars[0] < 3 || !IsFirstTickOfBar) 
 				return;
 
 			double Vol_UD_Val = VolumeUpDown()[0];
@@ -78,11 +78,13 @@ namespace NinjaTrader.NinjaScript.Strategies
 			double first = VOL()[1];
 			double second = VOL()[2];
 
+			double thirdBarVOL_mult = VOL()[4] * valueMultiplier;
+
 			// if previous two bars are each RED & at least twice the size of 3rd GREEN bar
 			// if (Close[0] > Vol_UD_Val) 
 			if ((thirdBar_isGreen && secondBar_isRed && firstBar_isRed) 
-				&& (VOL()[1] > VOL()[3]*valueMultiplier)
-				&& (VOL()[2] > VOL()[3]*valueMultiplier)
+				&& (VOL()[2] > thirdBarVOL_mult)
+				&& (VOL()[3] > thirdBarVOL_mult)
 				) 
 				{
 					// Print("The current Volume value is " + Vol_UD_Val.ToString());

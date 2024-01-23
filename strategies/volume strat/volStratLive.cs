@@ -67,7 +67,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 		protected override void OnBarUpdate()
 		// protected override void OnMarketData(MarketDataEventArgs marketDataUpdate)
 		{
-			if (BarsInProgress != 0 || CurrentBars[0] < 3) 
+			if (BarsInProgress != 0 || CurrentBars[0] < 3 || !IsFirstTickOfBar) 
 				return;
 
 			double Vol_UD_Val = VolumeUpDown()[0];
@@ -78,11 +78,13 @@ namespace NinjaTrader.NinjaScript.Strategies
 			double first = VOL()[1];
 			double second = VOL()[2];
 
+			double thirdBarVOL_mult = VOL()[3] * valueMultiplier;
+
 			// if previous two bars are each RED & at least twice the size of 3rd GREEN bar
 			// if (Close[0] > Vol_UD_Val) 
 			if ((thirdBar_isGreen && secondBar_isRed && firstBar_isRed) 
-				&& (VOL()[1] > VOL()[3]*valueMultiplier)
-				&& (VOL()[2] > VOL()[3]*valueMultiplier)
+				&& (VOL()[1] > thirdBarVOL_mult)
+				&& (VOL()[2] > thirdBarVOL_mult)
 				) 
 				{
 					// Print("The current Volume value is " + Vol_UD_Val.ToString());
