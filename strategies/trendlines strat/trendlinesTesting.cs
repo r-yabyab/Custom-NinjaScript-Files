@@ -25,7 +25,7 @@ using NinjaTrader.NinjaScript.DrawingTools;
 //This namespace holds Strategies in this folder and is required. Do not change it. 
 namespace NinjaTrader.NinjaScript.Strategies
 {
-	public class trendlines1Unlocked : Strategy
+	public class trendlinesTesting : Strategy
 	{
 		private Order entryOrder = null;
 		private Order profitTakeOrder = null;
@@ -38,7 +38,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 			if (State == State.SetDefaults)
 			{
 				Description									= @"Enter the description for your new custom Strategy here.";
-				Name										= "trendlines1Unlocked";
+				Name										= "trendlinesTesting";
 				// Calculate									= Calculate.OnBarClose;
 				Calculate									= Calculate.OnEachTick;
 				EntriesPerDirection							= 1;

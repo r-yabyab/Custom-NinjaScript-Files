@@ -1,1 +1,1 @@
-For testing purposes.
+A bunch of TA indicators cobbled together using limit orders for entry and PT/SL. Doesn't turn up a profit. Expect to find no profits in TA strategies in the futures market.
