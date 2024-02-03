@@ -25,7 +25,7 @@ using NinjaTrader.NinjaScript.DrawingTools;
 //This namespace holds Strategies in this folder and is required. Do not change it. 
 namespace NinjaTrader.NinjaScript.Strategies
 {
-	public class CustomPSARunlocked : Strategy
+	public class PsarStratLive : Strategy
 	{
 		private Order entryOrder = null;
 		private Order profitTakeOrder = null;
@@ -38,7 +38,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 			if (State == State.SetDefaults)
 			{
 				Description									= @"Enter the description for your new custom Strategy here.";
-				Name										= "CustomPSARunlocked";
+				Name										= "PsarStratLive";
 				// Calculate									= Calculate.OnBarClose;
 				Calculate									= Calculate.OnEachTick;
 				EntriesPerDirection							= 1;
@@ -94,9 +94,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 			}
 		}
 
-		protected override void OnBarUpdate()
+		// protected override void OnBarUpdate()
 		
-		// protected override void OnMarketData(MarketDataEventArgs marketDataUpdate)
+		protected override void OnMarketData(MarketDataEventArgs marketDataUpdate)
 		{
 			if (BarsInProgress != 0) 
 				return;
@@ -134,24 +134,24 @@ namespace NinjaTrader.NinjaScript.Strategies
 				
 				// // For OnBarUpdate (bar by bar update), order exec on bar open, works on historical testing
 				
-				if ((Close[0] > psarValRound) && (Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > SMA_medVal) && cross_below_Vortex)
-				// if ((Close[0] > psarValRound + tick_size*TickSize) && (Close[0] > SMA_medVal))
-				// if (Close[0] > psarVal && Close[0] > SMA_medVal)
-					// if ((Close[0] > psarVal + 1*TickSize))
-				{
-						Print("===========Condition met. Entering Long at price: " + Close[0] + "=========================");
-						Print("PSAR val offset: " + (psarValRound + tick_size*TickSize) + " //TICKOFFSET" + (tick_size*TickSize/.25) + " //TICKSIZE: " + TickSize);
-					EnterLong("Enter Long");
-					// EnterShort("Enter Short");
+				// if ((Close[0] > psarValRound) && (Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > SMA_medVal) && cross_below_Vortex)
+				// // if ((Close[0] > psarValRound + tick_size*TickSize) && (Close[0] > SMA_medVal))
+				// // if (Close[0] > psarVal && Close[0] > SMA_medVal)
+				// 	// if ((Close[0] > psarVal + 1*TickSize))
+				// {
+				// 		Print("===========Condition met. Entering Long at price: " + Close[0] + "=========================");
+				// 		Print("PSAR val offset: " + (psarValRound + tick_size*TickSize) + " //TICKOFFSET" + (tick_size*TickSize/.25) + " //TICKSIZE: " + TickSize);
+				// 	EnterLong("Enter Long");
+				// 	// EnterShort("Enter Short");
 
-					SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
-        			SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
-					// SetParabolicStop(CalculationMode.Ticks, stopLoss_tick_size);
-					// }
+				// 	SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
+        		// 	SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
+				// 	// SetParabolicStop(CalculationMode.Ticks, stopLoss_tick_size);
+				// 	// }
 
-					// SetTrailStop(CalculationMode.Ticks, 4);
+				// 	// SetTrailStop(CalculationMode.Ticks, 4);
 
-				}
+				// }
 
 				// For OnMarketData (tick by tick update)
 				// if (Close[0] == psarValRound + tick_size*TickSize)
@@ -175,44 +175,44 @@ namespace NinjaTrader.NinjaScript.Strategies
 
 				// =============================
 				// =============================
-				// // // For limit orders on every bar
-				// // // Need to add order objects to set profit takes and limit sells
-				// // // Watch for volatility might touch of both profit and sell
-				// if ((Close[0] < psarValRound + 3 + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && (Close[0] > SMA_medVal))
-				// // if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && SMAcross_above)
-				// {
-				// 	// if ((Close[0] > psarVal + 1*TickSize)) {
-				// 		Print("===========Condition met. Entering Long at price: " + Close[0] + "=========================");
-				// 		Print("PSAR val offset: " + (psarValRound + tick_size*TickSize) + " //TICKOFFSET" + (tick_size*TickSize/.25) + " //TICKSIZE: " + TickSize);
+				// // For limit orders on every bar
+				// // Need to add order objects to set profit takes and limit sells
+				// // Watch for volatility might touch of both profit and sell
+				if ((Close[0] < psarValRound + 3 + tick_size*TickSize) && (Close[0] > psarValRound + tick_size*TickSize) && (Close[0] > SMA_medVal))
+				// if ((Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > psarValRound + 1*TickSize) && SMAcross_above)
+				{
+					// if ((Close[0] > psarVal + 1*TickSize)) {
+						Print("===========Condition met. Entering Long at price: " + Close[0] + "=========================");
+						Print("PSAR val offset: " + (psarValRound + tick_size*TickSize) + " //TICKOFFSET" + (tick_size*TickSize/.25) + " //TICKSIZE: " + TickSize);
 
-				// entryPrice = psarValRound + tick_size*TickSize;
-				// EnterLongLimit(entryPrice, "PSAR entry");	
+				entryPrice = psarValRound + tick_size*TickSize;
+				EnterLongLimit(entryPrice, "PSAR entry");	
 
-				// }
+				}
 		}
 
-		// protected override void OnOrderUpdate (Order order, double limitPrice, double stopPrice, int quantity, int filled, double averageFillPrice, OrderState orderState, DateTime time, ErrorCode error, string nativeError)
-		// {
-		// 	if (order.Name == "PSAR entry" && orderState != OrderState.Filled)
-		// 	{
-		// 		entryOrder = order;
-		// 		SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
-        // 		SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
+		protected override void OnOrderUpdate (Order order, double limitPrice, double stopPrice, int quantity, int filled, double averageFillPrice, OrderState orderState, DateTime time, ErrorCode error, string nativeError)
+		{
+			if (order.Name == "PSAR entry" && orderState != OrderState.Filled)
+			{
+				entryOrder = order;
+				SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
+        		SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
 
-		// 	}
+			}
 
-		// 	if (entryOrder != null && entryOrder == order)
-		// 	{
-		// 		if (order.OrderState == OrderState.Cancelled && order.Filled == 0)
-		// 		{
-		// 			entryOrder = null;
-		// 		}
-		// 		if (order.OrderState == OrderState.Filled)
-		// 		{
-		// 			entryOrder = null;
-		// 		}
-		// 	}
-		// }
+			if (entryOrder != null && entryOrder == order)
+			{
+				if (order.OrderState == OrderState.Cancelled && order.Filled == 0)
+				{
+					entryOrder = null;
+				}
+				if (order.OrderState == OrderState.Filled)
+				{
+					entryOrder = null;
+				}
+			}
+		}
 
 // 		protected override void OnExecutionUpdate(Execution execution, string executionId, double price, int quantity, MarketPosition marketPosition, string orderId, DateTime time)
 // {

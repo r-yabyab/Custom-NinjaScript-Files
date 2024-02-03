@@ -67,7 +67,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 		protected override void OnBarUpdate()
 		// protected override void OnMarketData(MarketDataEventArgs marketDataUpdate)
 		{
-			if (BarsInProgress != 0 || CurrentBars[0] < 3 || !IsFirstTickOfBar) 
+			// if (BarsInProgress != 0 || CurrentBars[0] < 3 || !IsFirstTickOfBar) 
+			if (BarsInProgress != 0 || CurrentBars[0] < 3) 
 				return;
 
 			double Vol_UD_Val = VolumeUpDown()[0];

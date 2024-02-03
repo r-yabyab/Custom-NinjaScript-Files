@@ -134,7 +134,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 				
 				// // For OnBarUpdate (bar by bar update), order exec on bar open, works on historical testing
 				
-				if ((Close[0] > psarValRound) && (Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > SMA_medVal) && cross_below_Vortex)
+				// if ((Close[0] > psarValRound) && (Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > SMA_medVal) && cross_below_Vortex)
+				if ((Close[0] > psarValRound) && (Close[0] < psarValRound + tick_size*TickSize) && (Close[0] > SMA_medVal))
 				// if ((Close[0] > psarValRound + tick_size*TickSize) && (Close[0] > SMA_medVal))
 				// if (Close[0] > psarVal && Close[0] > SMA_medVal)
 					// if ((Close[0] > psarVal + 1*TickSize))
