@@ -68,39 +68,43 @@ namespace NinjaTrader.NinjaScript.Strategies
 			}
 		}
 
-		// protected override void OnBarUpdate()
-		protected override void OnMarketData(MarketDataEventArgs marketDataUpdate)
+		protected override void OnBarUpdate()
+		// protected override void OnMarketData(MarketDataEventArgs marketDataUpdate)
 		{
 			// if (BarsInProgress != 0 || CurrentBars[0] < 3 || !IsFirstTickOfBar) 
-			if (BarsInProgress != 0 || CurrentBars[0] < 3) 
+			if (BarsInProgress != 0 || CurrentBars[0] < 4)  {
+				Print("Waiting for more than 3 bars");
 				return;
+			}
 
 			double Vol_UD_Val = VolumeUpDown()[0];
-			bool firstBar_isRed = Close[2] < Open[2];
-			bool secondBar_isRed = Close[3] < Open[3];
-			bool thirdBar_isGreen = Close[4] > Open[4];
+			bool secondBar_isRed = Close[2] < Open[2];
+			bool thirdBar_isRed = Close[3] < Open[3];
+			bool fourthBar_isGreen = Close[4] > Open[4];
 
-			double first = VOL()[1];
-			double second = VOL()[2];
+			double secondRED = VOL()[2];
+			double thirdRED = VOL()[3];
+			double fourthGREEN = VOL()[4];
 
-			double thirdBarVOL_mult = VOL()[4] * valueMultiplier;
+			double fourthBarVOL_mult = VOL()[4] * valueMultiplier;
 
 			double SMA_medVal = SMA(SMA_med)[0];
+			Values[0][0] = SMA_medVal;
 
-			// if previous two bars are each RED & at least twice the size of 3rd GREEN bar
-			// if (Close[0] > Vol_UD_Val) 
-			if ((thirdBar_isGreen && secondBar_isRed && firstBar_isRed) 
+			// if 2nd and 3rd bar back is RED & 4th bar is green, if each 2nd and 3rd bar's vol times valueMultiplier's value are more than 4th bar's vol & is above SMA_medVal
+			if ((fourthBar_isGreen && thirdBar_isRed && secondBar_isRed) 
 				&& (VOL()[2] > VOL()[4]*valueMultiplier)
 				&& (VOL()[3] > VOL()[4]*valueMultiplier)
 				&& Close[0] > SMA_medVal
 				) 
 				{
-					// Print("The current Volume value is " + Vol_UD_Val.ToString());
-					// Print("firstBar_isRed : " + first.ToString());
-					// Print("secondBar_isRed : " + second.ToString());
-					// Print("thirdBar_isGreen: ++" + VolumeUpDown()[3].ToString());
-					// Print("thirdBar_isGreen:VOLVOL ++" + VOL()[3].ToString());
-					// Print("---------------");
+
+					Print("The current Volume value is " + Vol_UD_Val.ToString());
+					Print("2ndbarRED : " + secondRED.ToString());
+					Print("3rdbarRED : " + thirdRED.ToString());
+					Print("4thBarGREEN: ++" + fourthGREEN.ToString());
+					Print("ValMultiplier: " + VOL()[4]*valueMultiplier.ToString());
+					Print("---------------");
 
 				EnterLong("Enter Long");
 				SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
