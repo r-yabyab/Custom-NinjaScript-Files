@@ -80,7 +80,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 			double Vol_UD_Val = VolumeUpDown()[0];
 			bool secondBar_isRed = Close[2] < Open[2];
 			bool thirdBar_isRed = Close[3] < Open[3];
-			bool fourthBar_isGreen = Close[4] > Open[4];
+			bool fourthBar_isGreen = Close[4] >= Open[4];
 
 			double secondRED = VOL()[2];
 			double thirdRED = VOL()[3];
