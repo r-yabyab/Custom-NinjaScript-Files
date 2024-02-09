@@ -56,10 +56,12 @@ namespace NinjaTrader.NinjaScript.Strategies
 				Vol_UD_barsAgo = 0;
 				tick_size = 2;
 				stopLoss_tick_size = 18;
-				profitTarget_tick_size = 23;
+				profitTarget_tick_size = 19;
 				valueMultiplier = 2.1;
 
 				SMA_med = 50;
+
+				vol_lookBack = 7;
 
 				AddPlot(Brushes.DarkViolet, "SMA_med");
 			}
@@ -72,8 +74,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 		// protected override void OnMarketData(MarketDataEventArgs marketDataUpdate)
 		{
 			// if (BarsInProgress != 0 || CurrentBars[0] < 3 || !IsFirstTickOfBar) 
-			if (BarsInProgress != 0 || CurrentBars[0] < 4)  {
-				Print("Waiting for more than 3 bars");
+			if (BarsInProgress != 0 || CurrentBars[0] < 11)  {
+				Print("Waiting for more than 11 bars");
 				return;
 			}
 
@@ -91,11 +93,30 @@ namespace NinjaTrader.NinjaScript.Strategies
 			double SMA_medVal = SMA(SMA_med)[0];
 			Values[0][0] = SMA_medVal;
 
+			double fifthBar = VOL()[5];
+			double sixthBar = VOL()[6];
+			double seventhBar = VOL()[7];
+			double eighthBar = VOL()[8];
+			double ninthBar = VOL()[9];
+			double tenthBar = VOL()[10];
+			double eleventhBar = VOL()[11];
+
+
+			double[] values = {fifthBar, sixthBar, seventhBar, eighthBar, ninthBar, tenthBar, eleventhBar};
+			double maxValue = values[0];
+
+			for (int i = 0; i < vol_lookBack; i++) {
+				maxValue = Math.Max(maxValue, values[i]);
+			}
+
+
 			// if 2nd and 3rd bar back is RED & 4th bar is green, if each 2nd and 3rd bar's vol times valueMultiplier's value are more than 4th bar's vol & is above SMA_medVal
 			if ((fourthBar_isGreen && thirdBar_isRed && secondBar_isRed) 
 				&& (VOL()[2] > VOL()[4]*valueMultiplier)
 				&& (VOL()[3] > VOL()[4]*valueMultiplier)
-				&& (Close[0] > SMA_medVal)
+				&& (Close[0] >= SMA_medVal)
+				&& (VOL()[2] > maxValue || VOL()[3] > maxValue)
+				
 				) 
 				{
 
@@ -176,6 +197,12 @@ namespace NinjaTrader.NinjaScript.Strategies
 		[Range(10, int.MaxValue)]
 		[Display(Name="SMA_med", Order=6, GroupName="Parameters")]
 		public int SMA_med
+		{ get; set; }
+
+		[NinjaScriptProperty]
+		[Range(0, int.MaxValue)]
+		[Display(Name="vol_lookBack", Order=7, GroupName="Parameters")]
+		public int vol_lookBack
 		{ get; set; }
 		#endregion
 
