@@ -99,19 +99,13 @@ namespace NinjaTrader.NinjaScript.Strategies
 				) 
 				{
 
-					Print("The current Volume value is " + Vol_UD_Val.ToString());
-					Print("2ndbarRED : " + secondRED.ToString());
-					Print("3rdbarRED : " + thirdRED.ToString());
-					Print("4thBarGREEN: ++" + fourthGREEN.ToString());
-					Print("ValMultiplier: " + (VOL()[4]*valueMultiplier).ToString());
-					Print("---------------");
-
 				EnterLong("Enter Long");
 				SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
         		SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
-				} else if ((fourthBar_isGreen && thirdBar_isRed && secondBar_isRed) && Close[0] > SMA_medVal) {
-					Print("2nd & 3rd RED, 4th Green & Close / SMA" + Close[0].ToString() + " / " + SMA_medVal.ToString() );
-				}
+				} 
+				// else if ((fourthBar_isGreen && thirdBar_isRed && secondBar_isRed) && Close[0] > SMA_medVal) {
+				// 	Print("2nd & 3rd RED, 4th Green & Close / SMA" + Close[0].ToString() + " / " + SMA_medVal.ToString() );
+				// }
 
 		// 	// Sets SL/PT when limit order hits
 		// 	protected override void OnOrderUpdate(Order order, double limitPrice, double stopPrice, int quantity, int filled, double averageFillPrice, OrderState orderState, DateTime time, ErrorCode error, string nativeError)
