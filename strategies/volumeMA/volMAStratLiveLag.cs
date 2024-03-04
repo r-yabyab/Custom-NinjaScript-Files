@@ -77,6 +77,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 				return;
 			}
 
+			if (IsFirstTickOfBar && ((ToTime(Time[0]) >= 150000 && ToTime(Time[0]) < 245959) || (ToTime(Time[0]) >= 10000 && ToTime(Time[0]) < 140000)))
+			{
 			double Vol_UD_Val = VolumeUpDown()[0];
 			bool secondBar_isRed = Close[2] < Open[2];
 			bool thirdBar_isRed = Close[3] < Open[3];
@@ -103,6 +105,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 				SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
         		SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
 				} 
+			}
+
 				// else if ((fourthBar_isGreen && thirdBar_isRed && secondBar_isRed) && Close[0] > SMA_medVal) {
 				// 	Print("2nd & 3rd RED, 4th Green & Close / SMA" + Close[0].ToString() + " / " + SMA_medVal.ToString() );
 				// }

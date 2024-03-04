@@ -76,6 +76,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 			if (BarsInProgress != 0 || CurrentBars[0] < 3) 
 				return;
 
+			if (IsFirstTickOfBar && ((ToTime(Time[0]) >= 150000 && ToTime(Time[0]) < 245959) || (ToTime(Time[0]) >= 10000 && ToTime(Time[0]) < 140000)))
+			{
 			double Vol_UD_Val = VolumeUpDown()[0];
 			bool firstBar_isRed = Close[1] < Open[1];
 			bool secondBar_isRed = Close[2] < Open[2];
@@ -106,6 +108,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 				SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
         		SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
 				}
+			}
+
 
 
 				
