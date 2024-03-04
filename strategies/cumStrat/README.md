@@ -13,6 +13,7 @@ https://ninjatrader.com/support/helpGuides/nt8//NT%20HelpGuide%20English.html?or
 
 How it works:
 CumDelta val is always DeltaClose
-Price is triggered two bar after confirming
+For backtesting: Price is triggered two bars after confirming
+For live: Price triggered after 1 bar as shown in pic below
 
 ![alt text](../../etc/img/cumstrat.png)
