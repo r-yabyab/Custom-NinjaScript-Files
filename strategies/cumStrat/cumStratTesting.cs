@@ -25,14 +25,14 @@ using NinjaTrader.NinjaScript.DrawingTools;
 //This namespace holds Strategies in this folder and is required. Do not change it. 
 namespace NinjaTrader.NinjaScript.Strategies
 {
-	public class volMAStratTestingSHORT : Strategy
+	public class cumStratTesting : Strategy
 	{
 		protected override void OnStateChange()
 		{
 			if (State == State.SetDefaults)
 			{
 				Description									= @"Enter the description for your new custom Strategy here.";
-				Name										= "volMAStratTestingSHORT";
+				Name										= "cumStratTesting";
 				// Calculate									= Calculate.OnBarClose;
 				Calculate									= Calculate.OnEachTick;
 				EntriesPerDirection							= 1;
@@ -66,7 +66,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 			else if (State == State.Configure)
 			{
                 // // A 1 tick data series must be added to the OnStateChange() as this indicator runs off of tick data
-                // AddDataSeries(Data.BarsPeriodType.Tick, 1);
+                AddDataSeries(Data.BarsPeriodType.Tick, 1);
 
 			}
 		}
@@ -77,10 +77,13 @@ namespace NinjaTrader.NinjaScript.Strategies
 			if (BarsInProgress != 0 || CurrentBars[0] < 3) 
 				return;
 
+			// CumDelta(ISeries<double> input, Brush barColorDown, Brush barColorUp, Brush shadowColor, int shadowWidth, int minSize, bool showDivs)
+
             // positive is green, neg red
-            double firstCum = CumDelta.DeltaOpen[0] - CumDelta.DeltaClose[0];
-            double secondCum = CumDelta.DeltaOpen[1] - CumDelta.DeltaClose[1];
-            double thirdCum = CumDelta.DeltaOpen[2] - CumDelta.DeltaClose[2];            
+            double firstCum = CumDelta(Brushes.DarkViolet, Brushes.DarkViolet, Brushes.DarkViolet, 1, 0, true)[0];
+            double secondCum = CumDelta(Brushes.DarkViolet, Brushes.DarkViolet, Brushes.DarkViolet, 1, 0, true)[1];
+            // double secondCum = CumDelta(BarsArray[0], Brushes.DarkViolet, Brushes.DarkViolet, Brushes.DarkViolet, 1, 0, true)[1];
+            // double thirdCum = CumDelta.DeltaOpen[2] - CumDelta.DeltaClose[2];            
             // double fourthCum = CumDelta.DeltaOpen[3] - CumDelta.DeltaClose[3];            
 
 			double SMA_medVal = SMA(SMA_med)[0];
@@ -88,9 +91,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 
             // if previous two bars are each RED & at least twice the size of 3rd GREEN bar
             // if (Close[0] > Vol_UD_Val) 
-            if ((firstCum > 0) && (secondCum > 0) && (thirdCum > 0))
+            if (firstCum > secondCum)
             {
-                Print("Delta Close: " + CumDelta.DeltaClose[0]);
+                //  Print("Delta Close: " + CumDelta(BarsArray[0], Brushes.DarkViolet, Brushes.DarkViolet, Brushes.DarkViolet, 1, 0, true));
                 Print("---------------");
 
                 EnterShort("Enter Long");
