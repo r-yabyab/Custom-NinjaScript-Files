@@ -54,8 +54,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 				IsInstantiatedOnEachOptimizationIteration	= true;
 
 				tick_size = 2;
-				stopLoss_tick_size = 10;
-				profitTarget_tick_size = 20;
+				stopLoss_tick_size = 18;
+				profitTarget_tick_size = 23;
+				barDisplace = 20;
 
 				SMA_med = 50;
 
@@ -74,32 +75,56 @@ namespace NinjaTrader.NinjaScript.Strategies
 		// market order lags behind 1 bar if not tick replay
 		protected override void OnBarUpdate()
 		{
-			if (BarsInProgress != 0 || CurrentBars[0] < 3) 
+			if (BarsInProgress != 0 || CurrentBars[0] < barDisplace) 
 				return;
 
+                /* Checks to see if the time is during the busier hours (format is HHMMSS or HMMSS). Only allow trading if current time is during a busy period.
+                Uses local timezone */
+			if (IsFirstTickOfBar && (ToTime(Time[0]) >= 100000 && ToTime(Time[0]) < 140000) || (ToTime(Time[0]) >= 150000 && ToTime(Time[0]) < 245959) || (ToTime(Time[0]) >= 10000 && ToTime(Time[0]) < 53000)) 
+			{
 			// CumDelta(ISeries<double> input, Brush barColorDown, Brush barColorUp, Brush shadowColor, int shadowWidth, int minSize, bool showDivs)
 
             // positive is green, neg red
             double firstCum = CumDelta(Brushes.DarkViolet, Brushes.DarkViolet, Brushes.DarkViolet, 1, 0, true)[0];
-            double secondCum = CumDelta(Brushes.DarkViolet, Brushes.DarkViolet, Brushes.DarkViolet, 1, 0, true)[1];
+            double secondCum = CumDelta(Brushes.DarkViolet, Brushes.DarkViolet, Brushes.DarkViolet, 1, 0, true)[barDisplace];
             // double secondCum = CumDelta(BarsArray[0], Brushes.DarkViolet, Brushes.DarkViolet, Brushes.DarkViolet, 1, 0, true)[1];
             // double thirdCum = CumDelta.DeltaOpen[2] - CumDelta.DeltaClose[2];            
             // double fourthCum = CumDelta.DeltaOpen[3] - CumDelta.DeltaClose[3];            
 
+			// bool firstBar_isRed = Close[1] < Open[1];
+			// bool secondBar_isRed = Close[2] < Open[2];
+			// bool thirdBar_isGreen = Close[3] > Open[3];
+
+			bool firstBar_isRed = Close[1] < Open[1];
+			bool secondBar_isRed = Close[2] < Open[2];
+			bool thirdBar_isGreen = Close[3] > Open[3];
+
 			double SMA_medVal = SMA(SMA_med)[0];
+			Values[0][0] = SMA_medVal;
+
+			int logCounter = 1;
 
 
             // if previous two bars are each RED & at least twice the size of 3rd GREEN bar
             // if (Close[0] > Vol_UD_Val) 
-            if (firstCum > secondCum)
+            // if ((thirdBar_isGreen && secondBar_isRed && firstBar_isRed) && (firstCum > secondCum) && (Close[0] > SMA_medVal))
+            if ((firstCum > secondCum) && (Close[0] > SMA_medVal) && (Close[0] < Close[barDisplace]))
             {
                 //  Print("Delta Close: " + CumDelta(BarsArray[0], Brushes.DarkViolet, Brushes.DarkViolet, Brushes.DarkViolet, 1, 0, true));
+				Print(logCounter);
+				Print("Pos [0] --" + firstCum.ToString());
+				Print("Pos [1] --" + secondCum.ToString());
                 Print("---------------");
 
-                EnterShort("Enter Long");
+				logCounter++;
+
+                EnterLong("Enter Long");
                 SetStopLoss(CalculationMode.Ticks, stopLoss_tick_size);
                 SetProfitTarget(CalculationMode.Ticks, profitTarget_tick_size);
             }
+				
+			}
+
 
             // // Probably don't need this????
             // else if (BarsInProgress == 1)
@@ -134,6 +159,12 @@ namespace NinjaTrader.NinjaScript.Strategies
 		[Range(10, int.MaxValue)]
 		[Display(Name="SMA_med", Order=4, GroupName="Parameters")]
 		public int SMA_med
+		{ get; set; }
+
+		[NinjaScriptProperty]
+		[Range(0, int.MaxValue)]
+		[Display(Name="barDisplace", Order=5, GroupName="Parameters")]
+		public int barDisplace
 		{ get; set; }
 		#endregion
 
