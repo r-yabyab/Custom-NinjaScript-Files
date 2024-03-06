@@ -77,7 +77,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 				return;
 			}
 
-			if (IsFirstTickOfBar && ((ToTime(Time[0]) >= 150000 && ToTime(Time[0]) < 245959) || (ToTime(Time[0]) >= 10000 && ToTime(Time[0]) < 140000)))
+			// if (IsFirstTickOfBar && ((ToTime(Time[0]) >= 150000 && ToTime(Time[0]) < 245959) || (ToTime(Time[0]) >= 10000 && ToTime(Time[0]) < 140000)))
+			if ((ToTime(Time[0]) >= 150000 && ToTime(Time[0]) < 245959) || (ToTime(Time[0]) >= 10000 && ToTime(Time[0]) < 140000))
 			{
 			double Vol_UD_Val = VolumeUpDown()[0];
 			bool secondBar_isRed = Close[2] < Open[2];
