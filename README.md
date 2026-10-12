@@ -2,7 +2,7 @@
 Trading strategies for NinjaTrader8 built using the [NinjaScript Library](https://ninjatrader.com/support/helpGuides/nt8/NT%20HelpGuide%20English.html?language_reference_wip.htm) [new](https://developer.ninjatrader.com/docs/desktop). Each strategy comes with a backtesting and live environment script with plotted indicators. Use with NT8's strategy optimizer to find the best profit factor.
 <br/><br/>Trades stop from 2PM-3PM (local time) to mitigate overnight margin. I use rithmic through ApexTraderFunding which goes down at 3PM, so be aware of your brokerage hours as well.
 
-![Screenshot](https://i.gyazo.com/1048a05a4454c217c51f696684e61dcc.png)
+![Screenshot](https://i.imgur.com/NgnvRUU.png)
 
 ## Backtesting through Strategy Analyzer
 Backtesting works through historical price movements in NT8's Strategy Analyzer in 2 ways: Bar replay and Tick replay. 
