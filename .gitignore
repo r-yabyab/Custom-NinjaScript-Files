@@ -1,1 +1,6 @@
 .env
+
+/strategies/volumeMA/
+/strategies/volumeMAextended/
+/strategies/volumeStrat/
+/strategies/cumStrat/
